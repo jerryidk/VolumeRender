@@ -1,0 +1,22 @@
+Title: Direct Volume rendering with Raycasting 
+
+Description: 
+This is a class project for cs6635 at University of Utah.
+The project is intended to provide a guided tutorial on volume 
+rendering with OpenGL using Raycasting algorithm. 
+
+Build:
+This project is not intended for you to build as I only upload the src code
+but many dependencies are missing, so you will not be able to directly build 
+with src.
+
+# todo
+Dependencies: 
+
+# todo
+Tutorial:
+
+
+Author: Jerry Zhang
+Have a good day!
+ 
