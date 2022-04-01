@@ -1,0 +1,1 @@
+./App.exe ./res/Teapot.raw 256 256 178
