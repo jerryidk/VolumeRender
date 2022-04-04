@@ -58,9 +58,9 @@ void main()
    {
       float scalar = texture(volumeTex, pos).r;
 
-      //if(scalar < isovalue)
-         //src = dst;
-      //else
+      if(scalar < isovalue)
+         src = dst;
+      else
          src = TF(scalar);
       // TODO
       // ^^^^^^^^, implement transfer function here, 
