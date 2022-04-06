@@ -7,12 +7,18 @@ This is a class project for cs6635 at University of Utah. The project is intende
 
 ## Build
 
-This project is not intended for you to build as I only upload the src code but many dependencies are missing, so you will not be able to directly build with src. Some of the dependencies: 
+Major dependencies for this project: 
 - IMGUI
 - GLEW  
 - GLFW 
 - CyCodeBase
 - IMGUI-TRANSFER_FUNCTION 
+
+Modify first line of the `Makefile` to find you own g++. Then call `make all`. 
+
+## Usage
+
+To run the executable, run command `./APP.exe <path-to-data> <xdim> <ydim> <zdim>`. The program takes any raw data with no headers informations that with data type `uint8_t`.
 
 ## Tutorial
 
