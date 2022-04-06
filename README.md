@@ -246,7 +246,8 @@ I am not going to dive into the details of [IMGUI](https://github.com/ocornut/im
 **references**
 - [real time volume rendering](http://www.real-time-volume-graphics.org/?page_id=28)
 - [graphics runner volume rendering - kyle hayward](http://graphicsrunner.blogspot.com/2009/01/volume-rendering-101.html) 
-- [cs6635 university of utah lecture slides - chris johnson](https://my.eng.utah.edu/~cs6635/Week-7-Volume-Rendering-2022.pdf) 
+- [cs6635 university of utah lecture slides - chris johnson](https://my.eng.utah.edu/~cs6635/Week-7-Volume-Rendering-2022.pdf)
+- [nvidia GPU Gems 3](https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-39-volume-rendering-techniques)  
 
 Author: Jerry Zhang
 
