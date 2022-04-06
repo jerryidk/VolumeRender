@@ -5,6 +5,7 @@ out vec4 fcolor;
 in vec3 TexCoord;
 
 uniform sampler3D volumeTex;
+uniform sampler1D tfTex;
 
 //must be in projection space.
 uniform vec3 cameraPosInSTR;
@@ -17,28 +18,19 @@ uniform float stepsize;
 //Cube color
 uniform vec3 background; 
 
-int backtofront = 0;
+uniform int backtofront;
 
-int tfType = 0;
 const float PI = 3.1415926535;
-
 float mu = 0.5;
 float sigma = 0.55;
-
 vec4 TF(float scalar)
 {
-   if(tfType == 0)
-      return vec4(vec3(scalar), scalar*0.5);
-   
-   if(tfType == 1)
-   {
       float c = pow(scalar-mu, 2);
       float c2 = 2 * pow(sigma, 2);
       float num = exp(-c/c2); 
       float den = pow(2*PI, 0.5) * sigma;
       scalar = num/den;
       return vec4(scalar);
-   }
 }
 
 // See Nvidia GPU gem3 volume rendering. 
@@ -82,7 +74,7 @@ void main()
       if(scalar < isovalue)
          src = vec4(background, 0.0);
       else
-         src = TF(scalar);
+         src = texture(tfTex, scalar);
 
       dst = blending(src, dst);
       

@@ -6,9 +6,9 @@ class App
 public:
     char *AppName;
     char *Path;
-    int x,y,z;
+    int x, y, z;
 
-    App(char *name, char* path, int x, int y, int z)
+    App(char *name, char *path, int x, int y, int z)
     {
         AppName = name;
         Path = path;
@@ -55,7 +55,7 @@ private:
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        
+
         // Setup Platform/Renderer bindings
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init(glsl_version);
@@ -120,11 +120,36 @@ private:
         model = s * t;
 
         ImGuiIO &io = ImGui::GetIO();
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        ImVec2 cp[3];
+        cp[0] = ImVec2(0.0, 0.0);
+        cp[1] = ImVec2(0.5, 0.5);
+        cp[2] = ImVec2(1.0, 1.0);
+
+        float tf[100];
+
+        tfnw::TransferFunctionWidget tfn_widget;
+        auto colormap = tfn_widget.get_colormap();
+        int tfID = GL_CreateTexture1D((char*) colormap.data(), colormap.size()/4); 
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
+
+            if (tfn_widget.changed())
+            {
+                auto colormap = tfn_widget.get_colormap();
+                glTexImage1D(GL_TEXTURE_1D,
+                             0,
+                             GL_RGBA8,
+                             colormap.size() / 4,
+                             0,
+                             GL_RGBA,
+                             GL_UNSIGNED_BYTE,
+                             colormap.data());
+            }
+
             glfwPollEvents();
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -132,9 +157,11 @@ private:
             view.SetView(camera.pos, camera.lookat, camera.up);
             prog.Bind();
             prog["volumeTex"] = 0;
+            prog["tfTex"] = 1;
+            prog["backtofront"] = (uint8_t)blendmode;
             prog["isovalue"] = isovalue;
             prog["stepsize"] = stepsize;
-            prog["background"] = cy::Vec3f(background[0],background[1],background[2]);
+            prog["background"] = cy::Vec3f(background[0], background[1], background[2]);
             prog["MVP"] = projection * view * model;
             // Just translate in opposite direction
             // In general, just multiply by M inverse and negate z component.
@@ -143,26 +170,27 @@ private:
             prog["cameraPosInSTR"] = cameraPosInSTR;
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_3D, texture);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_1D, tfID);
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-
-
+            
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
-
             onImgui = io.WantCaptureMouse;
             ImGui::Begin("Demo window");
+            if(ImGui::Button("blending"))
+                blendmode = !blendmode; 
             ImGui::SliderFloat("Isovalue", &isovalue, 0.0f, 1.0f);
             ImGui::SliderFloat("stepsize", &stepsize, 0.0f, 300.0f);
             ImGui::ColorEdit4("Cube color", background);
+            tfn_widget.draw_ui();
             ImGui::End();
-            // Render dear imgui into screen
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             glfwSwapBuffers(window);
-           
         }
     }
 
@@ -177,10 +205,14 @@ private:
     }
 };
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-    if(argc != 5)
+    if (argc != 5)
+    {
+        std::cout << "missing commandline arg" << std::endl;
         return -1;
+    }
+
     App app("volume rendering", argv[1], atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
     app.run();
     return 0;

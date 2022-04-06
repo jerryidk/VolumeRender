@@ -11,15 +11,16 @@ This project is not intended for you to build as I only upload the src code but 
 - IMGUI
 - GLEW  
 - GLFW 
-- CyCodeBase (Cem Yuksel)
+- CyCodeBase
+- IMGUI-TRANSFER_FUNCTION 
 
 ## Tutorial
 
 #### What is DVR?
 
-Direct volume rendering is a special type of computer graphics techniques that takes 1d scalar value (voxel) to produce images. The major difference of DVR comparing to traditional volume rendering is that the it takes scalar value rather than vertices in the context of Graphics Programming. In the end of this guide, you can produce cool images like this 
+Direct volume rendering is a special type of computer graphics techniques that takes 1d scalar value (voxel) to produce images. The major difference of DVR comparing to traditional volume rendering is that the it takes scalar value rather than vertices in the context of Graphics Programming. In the end of this guide, you can produce cool images like this (or cooler, stay to the end)
 
-![Demo](./res/demo1.png)
+![Demo](./img/demo.png)
 
 =============================================================
 
@@ -129,7 +130,7 @@ void main()
 
 In this project, I am going to use Ray casting Algorithm. There are many techniques to do volume rendering. The major two approaches are Texture-based and Ray casting. The concept of texture-based is rather simple, where you can perceive the 3D volume as finite number of 2d images (texture). You can render those 2d slices with blending to get the volume. Since there are plenty resources online that implement this methods: [code project](https://www.codeproject.com/Articles/352270/Getting-Started-with-Volume-Rendering-using-OpenGL) and [nividia gpu gems](https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-39-volume-rendering-techniques), I am going to implement the later approach. 
 
-Raycasting is a subset of Raytracing, in fact, it is much more easier to implement in term of the mathmatical details. Raycasting algorithm shoots rays into the scene (per pixel). Then we simply sample our data (3d voxel) along ray direction in some uniform interval. And we can do certain shading/lightting calculation and output a color. ![raycast](./res/raycast.png) *[EG2006](https://www.cg.informatik.uni-siegen.de/data/Tutorials/EG2006/RTVG04_GPU_Raycasting.pdf)*
+Raycasting is a subset of Raytracing, in fact, it is much more easier to implement in term of the mathmatical details. Raycasting algorithm shoots rays into the scene (per pixel). Then we simply sample our data (3d voxel) along ray direction in some uniform interval. And we can do certain shading/lightting calculation and output a color. ![raycast](./img/raycast.png) *[EG2006](https://www.cg.informatik.uni-siegen.de/data/Tutorials/EG2006/RTVG04_GPU_Raycasting.pdf)*
 
 It is much easier to understand it if we see the code, here is a psudocode. For details, refer to quad.fs.
 
@@ -196,9 +197,51 @@ In the fragment shader
 ```
 =============================================================
 
+#### Iso surface extration / Transfer function
 
-Have fun! 
-Instructor: Chris Johnson (University of Utah)
+Glad you stay until here, now here are the bonus points. Now we have the data being rendered, let's first play around the fragment shader code. Iso surface extraction really is just on showing our volume data based on a threshold. If the volume sampler `scalar` is less than the threhold, we set the sample color `src` as background color, otherwise, proceed as usual.
+
+```
+    if(scalar < isovalue)
+        src = vec4(background, 0.0);
+    else
+        src = getColor(scalar);
+```
+How about TF? TF is simply a look-up table that map our 1d `scalar` value to `RGBA` value. This can be done in a one-liner in our fragment shader code `texture(TF_Texture, scalar)`. As usual, we get our TF data from a texture. Thus this gets our shader code
+
+```
+    if(scalar < isovalue)
+        src = vec4(background, 0.0);
+    else
+        src = texture(tfTex, scalar);
+```
+=============================================================
+
+#### A user interface - IMGUI
+
+I am not going to dive into the details of [IMGUI](https://github.com/ocornut/imgui) in this tutorial. However, I do want you to know what it is and maybe you can use it in your future project. IMGUI is short for Immediate Mode GUI. This codebase basically can render our windows and widgets to help you tinker around your own applicaiton. In this project particularly, I used this [transfer function](https://github.com/Twinklebear/imgui-transfer-function) built upon IMGUI. You can easily follow those repo to find out how to integerate the code into you own project. Anyway, this is a long README. Let's go check out some demos.
+
+=============================================================
+
+## Demo
+
+![Demo1](./img/demo%20(1).png) 
+![Demo2](./img/demo%20(2).png) 
+![Demo3](./img/demo%20(3).png) 
+![Demo4](./img/demo%20(4).png) 
+![Demo5](./img/demo%20(5).png) 
+
+**special thanks**
+- [twinklebear](https://github.com/Twinklebear/imgui-transfer-function)
+- [ocornut](https://github.com/ocornut/imgui) 
+- [cem yuksel](http://www.cemyuksel.com/cyCodeBase/code.html)
+- [joey de varis](https://learnopengl.com/)
+
+**references**
+- [real time volume rendering](http://www.real-time-volume-graphics.org/?page_id=28)
+- [graphics runner volume rendering - kyle hayward](http://graphicsrunner.blogspot.com/2009/01/volume-rendering-101.html) 
+- [cs6635 university of utah lecture slides - chris johnson](https://my.eng.utah.edu/~cs6635/Week-7-Volume-Rendering-2022.pdf) 
+
 Author: Jerry Zhang
 
  

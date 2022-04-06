@@ -10,6 +10,9 @@
 #include "IMGUI/imgui.h"
 #include "IMGUI/imgui_impl_glfw.h"
 #include "IMGUI/imgui_impl_opengl3.h"
+#include "IMGUI/imcurve.h"
+
+#include "TF/trasnferfunc.h"
 
 #include "cyCodeBase/cyTriMesh.h"
 #include "cyCodeBase/cyMatrix.h"
@@ -20,7 +23,6 @@
 
 #include "camera.h"
 
-
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
@@ -28,7 +30,6 @@ void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-
 
 cy::Vec3f cameraPos(0.0f, 0.0f, 10.0f);
 cy::Vec3f cameraTarget(0.0f, 0.0f, 0.0f);
@@ -44,14 +45,15 @@ float lightyaw = 11.3f;
 float lightpitch = 26.5f;
 
 bool onImgui = false;
+bool blendmode = false;
 float isovalue = 0.46;
 float stepsize = 100.0;
 float background[3] = {0.0f, 0.0f, 0.0f};
-
 float radian(float degree)
 {
     return degree * M_PI / 180.0f;
 }
+
 
 
 /**
@@ -169,6 +171,19 @@ int GL_CreateTexture3D(char* filename, int x, int y, int z)
     glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, x, y, z, 0, GL_RED, GL_UNSIGNED_BYTE, data);
 
     free(data);
+
+    return texture;
+}
+
+int GL_CreateTexture1D(char* data, int x)
+{          
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_1D, texture);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA8, x, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     return texture;
 }
