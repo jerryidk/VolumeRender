@@ -17,6 +17,8 @@ uniform float stepsize;
 //Cube color
 uniform vec3 background; 
 
+int backtofront = 0;
+
 int tfType = 0;
 const float PI = 3.1415926535;
 
@@ -26,7 +28,7 @@ float sigma = 0.55;
 vec4 TF(float scalar)
 {
    if(tfType == 0)
-      return vec4(scalar);
+      return vec4(vec3(scalar), scalar*0.5);
    
    if(tfType == 1)
    {
@@ -37,6 +39,24 @@ vec4 TF(float scalar)
       scalar = num/den;
       return vec4(scalar);
    }
+}
+
+// See Nvidia GPU gem3 volume rendering. 
+vec4 blending(vec4 src, vec4 dst)
+{
+   if(backtofront == 1)
+   {
+      //back to front src over dst
+      dst = src * src.a + (1.0 - src.a) * dst;
+   }
+   else
+   {
+      //front to back src under dst
+      dst.rgb += (1 - dst.a) * src.rgb * src.a;
+      dst.a   += (1 - dst.a) * src.a;
+   }
+
+   return dst;
 }
 
 void main()
@@ -52,6 +72,7 @@ void main()
    //This the intersection point in st/uv space 
    vec3 pos = TexCoord;
 
+   //dst = texture(volumeTex, pos).r;
    vec4 src = vec4(0.0);
    //ray casting algorithm
    for(int i = 0; i < iter; i++)
@@ -59,18 +80,14 @@ void main()
       float scalar = texture(volumeTex, pos).r;
 
       if(scalar < isovalue)
-         src = dst;
+         src = vec4(background, 0.0);
       else
          src = TF(scalar);
-      // TODO
-      // ^^^^^^^^, implement transfer function here, 
-      // tf is just a function that map scalar to rgba value
-   
-      //back to front alpha blending src over dst
-      dst = (1.0 - src.a) * dst + src.a * src;
 
-      //if(dst.a >= .95f)
-            //break; 
+      dst = blending(src, dst);
+      
+      if(dst.a >= .95f)
+            break; 
       //advance ray
       pos += step; 
       //check if pos out of bound

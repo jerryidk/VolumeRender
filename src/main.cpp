@@ -105,11 +105,6 @@ private:
             2, 3, 4,
             3, 4, 7};
 
-        float transferfunc[] = {
-            1.0, 0.0, 0.0, 1.0, 
-            0.0, 0.0, 1.0, 1.0, 
-        };
-
         int vao = GL_DrawCube(sizeof(Cube), sizeof(Order), Cube, Order);
         // Assuming data size is a byte = sizeof(char)
         int texture = GL_CreateTexture3D(this->Path, this->x, this->y, this->z);
