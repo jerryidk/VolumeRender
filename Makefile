@@ -3,7 +3,7 @@
 GPP = /mnt/c/msys64/mingw64/bin/g++.exe
 LINK = -lglfw3 -lglew32 -lopengl32 -lgdi32 -limm32
 EXE = ./build/App.exe
-FLAGS = -g -Wall -I./include
+FLAGS = -g -w -I./include
 
 #Linux
 #GPP = g++

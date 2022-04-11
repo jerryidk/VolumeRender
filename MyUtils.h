@@ -4,14 +4,12 @@
 
 #define GLEW_STATIC
 #define CY_GL_DONT_CHECK_CONTEXT
-#include "GLEW/glew.h"
+#include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
 #include "IMGUI/imgui.h"
 #include "IMGUI/imgui_impl_glfw.h"
 #include "IMGUI/imgui_impl_opengl3.h"
-#include "IMGUI/imcurve.h"
-
 #include "TF/trasnferfunc.h"
 
 #include "cyCodeBase/cyTriMesh.h"
