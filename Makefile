@@ -1,22 +1,38 @@
+# Using MinGW (windows only)
+# If you want to build on windows, install minGW and mesa dependencies
 GPP = /mnt/c/msys64/mingw64/bin/g++.exe
-EXE = App.exe
-FLAGS = -g -w -I./include
-LINK = -Llib -lglfw3 -lopengl32 -lgdi32
-OBJS = main.o
-OBJS += $(wildcard ./build/*.o)
-SRC = $(wildcard ./src/*.cpp)
-SRC += $(wildcard ./src/*.h)
+LINK = -lglfw3 -lglew32 -lopengl32 -lgdi32 -limm32
+EXE = ./build/App.exe
+FLAGS = -g -Wall -I./include
 
+#Linux
+#GPP = g++
+#LINK = -lglfw -lGLEW -lGL
+#EXE = ./build/App
+#FLAGS = -g -Wall -I./include
+
+#-----------------------------------------------------
+#--------Following should be changed carefully--------
+SRC = ./main.cpp
+SRC += $(wildcard ./include/IMGUI/imgui*.cpp)
+OBJS = $(addprefix ./build/, $(addsuffix .o, $(basename $(notdir $(SRC)))))
+#---------------------------Make rules ---------------
 all: $(EXE)
 	@echo Build complete
 
 $(EXE): $(OBJS)
 	$(GPP) -o $@ $^ $(FLAGS) $(LINK)
 
-main.o: $(SRC) 
-	$(GPP) -c -o $@ $< $(FLAGS) 
+./build/main.o: main.cpp *.h
+	$(GPP) -c -o $@ $< $(FLAGS)
+
+./build/%.o: ./include/IMGUI/%.cpp
+	$(GPP) -c -o $@ $< $(FLAGS)
+
+debug : 
+	@echo $(OBJS)
 
 clean: 
-	rm -f main.o $(EXE)
+	rm -f $(OBJS) $(EXE)
 
  
