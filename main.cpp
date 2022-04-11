@@ -37,7 +37,7 @@ private:
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "volume rendering", NULL, NULL);
+        window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, this->AppName, NULL, NULL);
         if (!window)
         {
             glfwTerminate();
@@ -47,7 +47,6 @@ private:
         if (glewInit() != GLEW_OK)
             std::cout << "glew error" << std::endl;
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-        glfwSetKeyCallback(window, key_callback);
         glfwSetCursorPosCallback(window, cursor_pos_callback);
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
@@ -105,13 +104,13 @@ private:
             2, 3, 4,
             3, 4, 7};
 
-        int vao = GL_DrawCube(sizeof(Cube), sizeof(Order), Cube, Order);
+        GL_DrawCube(sizeof(Cube), sizeof(Order), Cube, Order);
         // Assuming data size is a byte = sizeof(char)
         int texture = GL_CreateTexture3D(this->Path, this->x, this->y, this->z);
 
         cy::Matrix4f projection = projection.Perspective(radian(45.0f),
                                                          (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        cy::Matrix4f view, model, s, r, t;
+        cy::Matrix4f view, model, s, t;
         cy::Vec4f tmp;
         cy::Vec3f cameraPosInSTR, m;
         m = cy::Vec3f(-0.5f, -0.5f, 0.5f);
@@ -120,14 +119,6 @@ private:
         model = s * t;
 
         ImGuiIO &io = ImGui::GetIO();
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-        ImVec2 cp[3];
-        cp[0] = ImVec2(0.0, 0.0);
-        cp[1] = ImVec2(0.5, 0.5);
-        cp[2] = ImVec2(1.0, 1.0);
-
-        float tf[100];
 
         tfnw::TransferFunctionWidget tfn_widget;
         auto colormap = tfn_widget.get_colormap();

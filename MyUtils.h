@@ -22,7 +22,6 @@
 #include "camera.h"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos);
                                               
 // settings
@@ -89,20 +88,6 @@ unsigned int GL_CreateVAO(float *vertices, size_t size, size_t stride, bool enab
 
     return VAO;
 }
-
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-    int esc_state = glfwGetKey(window, GLFW_KEY_ESCAPE);
-    int space_state = glfwGetKey(window, GLFW_KEY_SPACE);
-    int left_state = glfwGetKey(window, GLFW_KEY_LEFT);
-    int right_state = glfwGetKey(window, GLFW_KEY_RIGHT);
-    int one_state = glfwGetKey(window, GLFW_KEY_1);
-    int two_state = glfwGetKey(window, GLFW_KEY_2);
-
-    if (esc_state == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
-
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------

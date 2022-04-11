@@ -14,7 +14,15 @@ Major dependencies for this project:
 - CyCodeBase
 - IMGUI-TRANSFER_FUNCTION 
 
-Modify first line of the `Makefile` to find you own g++. Then call `make all`. 
+You can run it on an standard linux OS or if you are windows, you can use wsl2
+and mingw64 to run. For both, you must install `glfw` and `glew`. For windows
+with wsl2, you want to use mingw64 to install gcc, glfw, and glew and use wsl2
+to launch a bash shell to run `make` and `run.sh`. Modify the `Makefile` as you
+like to fit. Do note that, if you just want it to run on windows with
+powershell, you must change file paths and install make at least ( I haven't
+test it on windows with powershell, but it should be easy to do if you have
+make, but I recommond either run it on a linux machine or just install wsl2 and
+mingw64 on windows.)
 
 ## Usage
 
